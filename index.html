@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モグラ叩きゲーム</title>
+    <style>
+        /* ゲーム全体のスタイル */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* ゲーム情報表示エリア */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* ゲームボード */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background-color: #90EE90;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* モグラの穴 */
+        .hole {
+            width: 100px;
+            height: 100px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* モグラ */
+        .mole {
+            width: 80px;
+            height: 80px;
+            background-color: #808080;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -80px;
+            left: 10px;
+            transition: bottom 0.3s;
+        }
+
+        /* モグラが表示されている状態 */
+        .mole.show {
+            bottom: 10px;
+        }
+
+        /* リトライボタン */
+        #retryButton {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #retryButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>モグラ叩きゲーム</h1>
+    <div class="game-info">
+        <div>スコア: <span id="score">0</span></div>
+        <div>残り時間: <span id="timer">60</span>秒</div>
+    </div>
+    <div class="game-board" id="gameBoard"></div>
+    <button id="retryButton">もう一度プレイ</button>
+
+    <script>
+        // ゲームの状態管理
+        let score = 0;
+        let timeLeft = 60;
+        let gameInterval;
+        let moleInterval;
+        let isPlaying = false;
+
+        // DOM要素の取得
+        const gameBoard = document.getElementById('gameBoard');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const retryButton = document.getElementById('retryButton');
+
+        // ゲームボードの初期化
+        function initializeGame() {
+            // 9つの穴を作成
+            for (let i = 0; i < 9; i++) {
+                const hole = document.createElement('div');
+                hole.className = 'hole';
+                
+                const mole = document.createElement('div');
+                mole.className = 'mole';
+                
+                hole.appendChild(mole);
+                gameBoard.appendChild(hole);
+
+                // モグラをクリックしたときの処理
+                mole.addEventListener('click', () => {
+                    if (mole.classList.contains('show')) {
+                        score += 10;
+                        scoreDisplay.textContent = score;
+                        mole.classList.remove('show');
+                    }
+                });
+            }
+        }
+
+        // ランダムなモグラの表示
+        function showRandomMole() {
+            const moles = document.querySelectorAll('.mole');
+            const randomIndex = Math.floor(Math.random() * moles.length);
+            const mole = moles[randomIndex];
+
+            mole.classList.add('show');
+            setTimeout(() => {
+                mole.classList.remove('show');
+            }, 1000);
+        }
+
+        // ゲーム開始
+        function startGame() {
+            score = 0;
+            timeLeft = 60;
+            isPlaying = true;
+            scoreDisplay.textContent = score;
+            timerDisplay.textContent = timeLeft;
+            retryButton.style.display = 'none';
+
+            // タイマーの開始
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // モグラの表示開始
+            moleInterval = setInterval(showRandomMole, 1000);
+        }
+
+        // ゲーム終了
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameInterval);
+            clearInterval(moleInterval);
+            retryButton.style.display = 'block';
+            alert(`ゲーム終了！\nスコア: ${score}点`);
+        }
+
+        // リトライボタンのイベントリスナー
+        retryButton.addEventListener('click', startGame);
+
+        // ゲームの初期化と開始
+        initializeGame();
+        startGame();
+    </script>
+</body>
+</html> 
