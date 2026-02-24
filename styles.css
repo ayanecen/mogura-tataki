@@ -1,0 +1,307 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+    --primary-color: #ff8a80;
+    --primary-hover: #ff5252;
+    --accent-color: #81d4fa;
+    --text-color: #4e342e;
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --hole-color: #5d4037;
+    --mole-color: #ccab9f;
+    --cheek-color: #ffcdd2;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+
+#game-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+header {
+    text-align: center;
+    width: 100%;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    color: #ff8a80;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+select, button {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: 1rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.stats-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.stat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+    box-shadow: var(--card-shadow);
+}
+
+.stat-card .label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.stat-card .value {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 30px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--card-shadow);
+}
+
+/* Hole & Mole */
+.hole {
+    aspect-ratio: 1 / 1;
+    background: var(--hole-color);
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 10px 20px rgba(0,0,0,0.4), 0 4px 0 rgba(255,255,255,0.2);
+    cursor: pointer;
+}
+
+.mole {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    left: 5%;
+    top: 100%; /* Hidden */
+    transition: top 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto;
+}
+
+.mole.show {
+    top: 10%;
+}
+
+.mole-svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Mole features */
+.mole-body { fill: var(--mole-color); }
+.mole-eye { fill: #333; }
+.mole-cheek { fill: var(--cheek-color); opacity: 0.8; }
+.mole-nose { fill: #ec407a; }
+.mole-mouth { stroke: #333; stroke-width: 2; fill: none; stroke-linecap: round; }
+
+/* Feedback */
+.mole.hit {
+    animation: hit-bounce 0.4s ease;
+}
+
+@keyframes hit-bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.8); }
+    100% { transform: scale(1); }
+}
+
+.hole.miss {
+    animation: shake 0.2s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.floating-score {
+    position: absolute;
+    color: #ff5252;
+    font-weight: bold;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: float-up 0.8s ease-out forwards;
+    z-index: 10;
+    text-shadow: 1px 1px 2px white;
+}
+
+@keyframes float-up {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
+
+footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+#start-button {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+}
+
+#start-button:hover:not(:disabled) {
+    background: var(--primary-hover);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s ease;
+}
+
+.modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.modal.hidden .modal-content {
+    transform: scale(0.9);
+}
+
+.modal-content {
+    transition: transform 0.3s ease;
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-width: 90%;
+    width: 320px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.modal-content p {
+    font-size: 1.2rem;
+    margin: 20px 0;
+}
+
+#restart-button {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-weight: bold;
+}
+
+/* Responsiveness */
+@media (max-width: 400px) {
+    h1 { font-size: 2rem; }
+    .game-board { gap: 10px; padding: 15px; }
+    .stat-card { padding: 10px 15px; min-width: 100px; }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .mole { transition: top 0.1s; }
+    .floating-score { animation: fade-out 0.5s forwards; }
+    .hole.miss { animation: none; opacity: 0.7; }
+}
+
+@keyframes fade-out {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
